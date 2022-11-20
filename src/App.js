@@ -1,24 +1,56 @@
-import logo from './logo.svg';
+import { useState } from 'react';
+import { FileDrop } from 'react-file-drop';
+import {
+  BlobReader,
+  TextWriter,
+  ZipReader,
+} from '@zip.js/zip.js';
+
+import '@picocss/pico';
 import './App.css';
 
+import EnemyArmy from './EnemyArmy';
+
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+  const [err, setErr] = useState(false);
+  const [armyList, setArmyList] = useState(localStorage.armyList);
+
+  const onFile = async (files) => {
+    console.log(files)
+    let armyListXML
+    try {
+      const buf = await files[0].arrayBuffer()
+      const blob = new Blob([buf]);
+
+      const zipFileReader = new BlobReader(blob);
+      const zipReader = new ZipReader(zipFileReader);
+      const firstEntry = (await zipReader.getEntries()).shift();
+      const textWriter = new TextWriter();
+      armyListXML = await firstEntry.getData(textWriter);
+      await zipReader.close();
+
+      setArmyList(armyListXML);
+      localStorage.armyList = armyList;
+    } catch (e) {
+      setErr('This does not appear to be a valid zip file')
+      setTimeout(() => setErr(false), 3000)
+    }
+  }
+
+  return (<FileDrop onDrop={onFile}>
+      <div data-theme="dark" className="container">
+        <article>
+          <header>The Automaton Crusade</header>
+          <details open={!armyList}>
+            <summary>Load Enemy .rosz</summary>
+            <button className="outline" onClick={() => document.getElementById('loadRoster').click() }>Drop a .rosz roster for the enemy anywhere on the page, or click to select one</button>
+            <input type="file" style={{display: 'none'}} id="loadRoster" onChange={e => onFile(e.target.files) } />
+            <p>{err || ' '}</p>
+          </details>
+          <EnemyArmy armyList={armyList} onFile={onFile} />
+        </article>
+      </div>
+    </FileDrop>
   );
 }
 
