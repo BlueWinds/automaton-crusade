@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const sumPower = (units) => units.reduce((sum, u) => sum + u.power, 0)
 
@@ -37,6 +37,8 @@ const EnemyListSelection = ({ units }) => {
 
   const [list, setList] = useState([])
 
+  useEffect(() => setList([]), [units])
+
   const generateList = () => {
     const newList = [...units.map(u => ({behavior: Math.floor(Math.random() * behaviors.length), ...u}))]
     const discards = []
@@ -44,7 +46,7 @@ const EnemyListSelection = ({ units }) => {
 
     while (sumPower(newList) > targetPowerLevel) {
       let i = Math.floor(Math.random() * newList.length)
-      discards.push(newList.splice(i, i + 1)[0])
+      discards.push(newList.splice(i, 1)[0])
     }
 
     discards.sort((u1, u2) => u2.power - u1.power)
@@ -82,26 +84,33 @@ const EnemyListSelection = ({ units }) => {
   </div>)
 }
 
+const modelCount = (unit) => Array.from(unit.querySelectorAll('[type="model"]'))
+  .map(u => parseInt(u.getAttribute('number'), 10))
+  .reduce((sum, c) => sum + c, 0)
+
+const powerLevel = (unit) => Array.from(unit.querySelectorAll('[name=" PL"]'))
+  .map(u => parseInt(u.getAttribute('value'), 10))
+  .reduce((sum, c) => sum + c, 0)
+
 const EnemyArmy = ({ armyList, onFile }) => {
   let units = []
 
   if (armyList) {
     const parser = new DOMParser();
     const xml = parser.parseFromString(armyList, "text/xml");
-    const selections = [...xml.querySelector('selections').children]
 
-    units = selections.filter(unit => unit.getAttribute('type') === 'unit' || unit.getAttribute('type') === 'model').map(unit => {
-      let nameAndNumber = `${unit.getAttribute('name')}`
+    Array.from(xml.querySelectorAll('force > selections > [type="model"]')).forEach(unit => {
+      units.push({
+        name: unit.getAttribute('customName') || unit.getAttribute('name'),
+        power: powerLevel(unit),
+      })
+    })
 
-      if (unit.getAttribute('type') === 'unit') {
-        const count = [...unit.querySelectorAll('[type="model"]')].map(u => parseInt(u.getAttribute('number'), 10)).reduce((sum, c) => sum + c, 0)
-        nameAndNumber += ' x' + count
-      }
-
-      return {
-        name: unit.getAttribute('customName') ? `${unit.getAttribute('customName')} (${nameAndNumber})` : nameAndNumber,
-        power: [...unit.querySelectorAll('[name=" PL"]')].reduce((sum, c) => sum + parseInt(c.getAttribute('value'), 10), 0),
-      }
+    Array.from(xml.querySelectorAll('force > selections > [type="unit"]')).forEach(unit => {
+      units.push({
+        name: `${unit.getAttribute('customName') || unit.getAttribute('name')} x${modelCount(unit)}`,
+        power: powerLevel(unit),
+      })
     })
   }
 

@@ -16,8 +16,8 @@ function App() {
   const [armyList, setArmyList] = useState(localStorage.armyList);
 
   const onFile = async (files) => {
-    console.log(files)
     let armyListXML
+
     try {
       const buf = await files[0].arrayBuffer()
       const blob = new Blob([buf]);
@@ -29,8 +29,8 @@ function App() {
       armyListXML = await firstEntry.getData(textWriter);
       await zipReader.close();
 
+      localStorage.armyList = armyListXML;
       setArmyList(armyListXML);
-      localStorage.armyList = armyList;
     } catch (e) {
       setErr('This does not appear to be a valid zip file')
       setTimeout(() => setErr(false), 3000)
