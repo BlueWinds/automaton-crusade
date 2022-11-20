@@ -116,7 +116,7 @@ const EnemyArmy = ({ armyList, onFile }) => {
 
   return (<>
     <details>
-      <summary>Enemy Order of Battle</summary>
+      <summary>Enemy Order of Battle ({sumPower(units)} PL)</summary>
       <UnitTable units={units} />
     </details>
     <details open={!!armyList}>
