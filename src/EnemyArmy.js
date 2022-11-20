@@ -92,6 +92,20 @@ const powerLevel = (unit) => Array.from(unit.querySelectorAll('[name=" PL"]'))
   .map(u => parseInt(u.getAttribute('value'), 10))
   .reduce((sum, c) => sum + c, 0)
 
+const name = (unit) => {
+  let str = unit.getAttribute('name')
+
+  if (modelCount(unit) > 1) {
+    str += ' x' + modelCount(unit)
+  }
+
+  if (unit.getAttribute('customName')) {
+    str = unit.getAttribute('customName') + ' (' + str + ')'
+  }
+
+  return str
+}
+
 const EnemyArmy = ({ armyList, onFile }) => {
   let units = []
 
@@ -101,14 +115,14 @@ const EnemyArmy = ({ armyList, onFile }) => {
 
     Array.from(xml.querySelectorAll('force > selections > [type="model"]')).forEach(unit => {
       units.push({
-        name: unit.getAttribute('customName') || unit.getAttribute('name'),
+        name: name(unit),
         power: powerLevel(unit),
       })
     })
 
     Array.from(xml.querySelectorAll('force > selections > [type="unit"]')).forEach(unit => {
       units.push({
-        name: `${unit.getAttribute('customName') || unit.getAttribute('name')} x${modelCount(unit)}`,
+        name: name(unit),
         power: powerLevel(unit),
       })
     })
