@@ -2,16 +2,19 @@
   "name": "automaton-crusade",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://bluewinds.github.io/automaton-crusade",
+  "homepage": "https://bluewinds.github.io/automaton-crusade/",
   "dependencies": {
     "@picocss/pico": "^1.5.6",
     "@zip.js/zip.js": "^2.6.54",
+    "gh-pages": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-file-drop": "^3.1.6",
     "react-scripts": "5.0.1"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject"

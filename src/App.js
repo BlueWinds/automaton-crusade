@@ -42,7 +42,7 @@ function App() {
         <article>
           <header>The Automaton Crusade</header>
           <details open={!armyList}>
-            <summary>Load Enemy .rosz</summary>
+            <summary>Load enemy .rosz</summary>
             <button className="outline" onClick={() => document.getElementById('loadRoster').click() }>Drop a .rosz roster for the enemy anywhere on the page, or click to select one</button>
             <input type="file" style={{display: 'none'}} id="loadRoster" onChange={e => onFile(e.target.files) } />
             <p>{err || ' '}</p>

@@ -111,7 +111,7 @@ const EnemyArmy = ({ armyList, onFile }) => {
       <UnitTable units={units} />
     </details>
     <details open={!!armyList}>
-      <summary>Muster Enemy Army</summary>
+      <summary>Muster an enemy army</summary>
       <EnemyListSelection units={units} />
     </details>
   </>)
