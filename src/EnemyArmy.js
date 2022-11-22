@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import UnitAction from './UnitAction';
 
 const sumPower = (units) => units.reduce((sum, u) => sum + u.power, 0)
 
@@ -9,15 +10,51 @@ const UnitTable = ({units}) => {
     <thead>
       <tr>
         <th>Power</th>
-        <th>Behavior</th>
         <th>Unit</th>
       </tr>
     </thead>
     <tbody>
       {units.map((unit, i) => (<tr key={i}>
         <td>{unit.power}</td>
-        <td>{behaviors[unit.behavior]}</td>
         <td>{unit.name}</td>
+      </tr>))}
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>{sumPower(units)}</th>
+        <td>Unit</td>
+      </tr>
+    </tfoot>
+  </table>)
+}
+
+const ActiveUnitTable = ({units}) => {
+  const [phase, setPhase] = useState('Deploy')
+
+  return (<table className="unit-list">
+    <thead>
+      <tr>
+        <th>Power</th>
+        <th>Behavior</th>
+        <th>Unit</th>
+        <th>
+          <nav>
+            <ul>
+              <li><button className={phase === 'Deploy' ? 'outline' : 'outline secondary'} onClick={() => setPhase('Deploy')}>Deploy</button></li>
+              <li><button className={phase === 'Move' ? 'outline' : 'outline secondary'} onClick={() => setPhase('Move')}>Move</button></li>
+              <li><button className={phase === 'Shoot' ? 'outline' : 'outline secondary'} onClick={() => setPhase('Shoot')}>Shoot</button></li>
+              <li><button className={phase === 'Charge' ? 'outline' : 'outline secondary'} onClick={() => setPhase('Charge')}>Charge</button></li>
+            </ul>
+          </nav>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {units.map((unit, i) => (<tr key={i}>
+        <td>{unit.power}</td>
+        <td>{unit.behavior}</td>
+        <td>{unit.name}</td>
+        <td><UnitAction unit={unit} phase={phase} /></td>
       </tr>))}
     </tbody>
     <tfoot>
@@ -25,6 +62,17 @@ const UnitTable = ({units}) => {
         <th>{sumPower(units)}</th>
         <td>Behavior</td>
         <td>Unit</td>
+        <th>
+          Action
+          <nav>
+            <ul>
+              <li><button className={phase === 'Deploy' ? 'outline' : 'outline secondary'} onClick={() => setPhase('Deploy')}>Deploy</button></li>
+              <li><button className={phase === 'Move' ? 'outline' : 'outline secondary'} onClick={() => setPhase('Move')}>Move</button></li>
+              <li><button className={phase === 'Shoot' ? 'outline' : 'outline secondary'} onClick={() => setPhase('Shoot')}>Shoot</button></li>
+              <li><button className={phase === 'Charge' ? 'outline' : 'outline secondary'} onClick={() => setPhase('Charge')}>Charge</button></li>
+            </ul>
+          </nav>
+        </th>
       </tr>
     </tfoot>
   </table>)
@@ -35,12 +83,10 @@ const EnemyListSelection = ({ units }) => {
   const [playerPower, setPlayerPower] = useState(100)
   const [enemyBonus, setEnemyBonus] = useState(25)
 
-  const [list, setList] = useState([])
-
-  useEffect(() => setList([]), [units])
+  const [list, setList] = useState(localStorage.activeList ? JSON.parse(localStorage.activeList) : [])
 
   const generateList = () => {
-    const newList = [...units.map(u => ({behavior: Math.floor(Math.random() * behaviors.length), ...u}))]
+    const newList = [...units.map(u => ({behavior: behaviors[Math.floor(Math.random() * behaviors.length)], ...u}))]
     const discards = []
     const targetPowerLevel = playerPower * (1 + enemyBonus / 100)
 
@@ -56,8 +102,9 @@ const EnemyListSelection = ({ units }) => {
       }
     }
 
-    newList.sort((u1, u2) => u1.behavior - u2.behavior)
+    newList.sort((u1, u2) => behaviors.indexOf(u1.behavior) - behaviors.indexOf(u2.behavior))
 
+    localStorage.activeList = JSON.stringify(newList)
     setList(newList)
   }
 
@@ -80,7 +127,7 @@ const EnemyListSelection = ({ units }) => {
       </div>
       <div></div>
     </div>
-    {list.length ? <UnitTable units={list} /> : ''}
+    {list.length ? <ActiveUnitTable units={list} /> : ''}
   </div>)
 }
 

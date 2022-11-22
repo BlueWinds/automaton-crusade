@@ -9,3 +9,10 @@ header {
 .unit-list td:nth-child(2), .unit-list th:nth-child(2) {
   width: 9em;
 }
+
+button.small, nav button {
+  padding: 0px 6px;
+  display: inline;
+  width: auto;
+  margin: 5px;
+}
