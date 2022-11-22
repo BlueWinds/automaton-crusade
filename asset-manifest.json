@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/automaton-crusade/static/css/main.8f495d51.css",
-    "main.js": "/automaton-crusade/static/js/main.a155ebe3.js",
+    "main.css": "/automaton-crusade/static/css/main.0ae0c740.css",
+    "main.js": "/automaton-crusade/static/js/main.e21aedac.js",
     "index.html": "/automaton-crusade/index.html",
-    "main.8f495d51.css.map": "/automaton-crusade/static/css/main.8f495d51.css.map",
-    "main.a155ebe3.js.map": "/automaton-crusade/static/js/main.a155ebe3.js.map"
+    "main.0ae0c740.css.map": "/automaton-crusade/static/css/main.0ae0c740.css.map",
+    "main.e21aedac.js.map": "/automaton-crusade/static/js/main.e21aedac.js.map"
   },
   "entrypoints": [
-    "static/css/main.8f495d51.css",
-    "static/js/main.a155ebe3.js"
+    "static/css/main.0ae0c740.css",
+    "static/js/main.e21aedac.js"
   ]
 }
