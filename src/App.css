@@ -1,13 +1,46 @@
+body {
+  background: black;
+  min-height: 100rem;
+}
+
 header {
   text-align: center;
 }
 
-.unit-list td:first-child, .unit-list th:first-child {
-  width: 5em;
+.roster td:first-child, .roster th:first-child {
+  width: 3em;
 }
 
-.unit-list td:nth-child(2), .unit-list th:nth-child(2) {
-  width: 9em;
+.roster td:nth-child(2), .roster th:nth-child(2) {
+    width: 9em;
+}
+
+.unit-list [data-dead=true] td {
+  text-decoration: line-through;
+}
+
+.button-group li {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.button-group li button {
+  border-radius: 0;
+  margin-left: 0;
+  margin-right: 0;
+  border-width: 1px;
+}
+
+.button-group li:first-child button {
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+  margin-left: 5px;
+}
+
+.button-group li:last-child button {
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+  margin-right: 5px;
 }
 
 button.small, nav button {
@@ -16,3 +49,32 @@ button.small, nav button {
   width: auto;
   margin: 5px;
 }
+
+.unit-status {
+  width: 10em;
+}
+
+.unit-status label {
+  display: inline-block;
+}
+
+.unit-status label span {
+  position: absolute;
+  font-size: 0.6em;
+}
+
+.unit-status input[type="number"] {
+  margin: 0.8em 0.5em 0px 0px;
+  padding: 5px;
+  width: 2.5em;
+  height: 2em;
+}
+
+.unit-status input[type="checkbox"] {
+  margin: 1.3em 0.5em 0px 0px;
+  padding: 5px;
+  padding-top: 0;
+  padding-bottom: 0;
+  vertical-align: initial;
+}
+
