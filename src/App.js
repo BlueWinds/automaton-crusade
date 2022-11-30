@@ -25,9 +25,10 @@ import { sumPower } from './state/utils'
 
 import Help, { HideHelp } from './Help'
 import SetUp from './SetUp'
-import EnemyArmy, {ActiveUnitTable, SpawnPoints} from './EnemyArmy'
+import EnemyArmy, {ActiveUnitTable, Phase, SpawnPoints} from './EnemyArmy'
 import EnemyStrategem from './EnemyStrategem'
 import PostBattle from './PostBattle'
+import Modal from './Modal'
 
 function App() {
   const [err, setErr] = useState(false)
@@ -63,6 +64,7 @@ function App() {
 
   return (<FileDrop onDrop={onFile}>
     <div data-theme="dark" className="container">
+      <Modal />
       <article>
         <header>The Automaton Crusade <HideHelp /></header>
         {showIntro && <details open={!roster.length || !hasAllUnitBehaviors}>
@@ -91,7 +93,9 @@ function App() {
             <Help>{deploymentMd}</Help>
             <Help>{playingMd}</Help>
             <EnemyStrategem />
+            <div id="top-of-turn"><Phase /></div>
             <ActiveUnitTable />
+            <Phase />
           </>: ''}
         </details>
         <details>

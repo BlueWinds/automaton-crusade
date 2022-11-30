@@ -1,5 +1,6 @@
 import { useDispatch } from 'react-redux'
 import { useRoster, useDefaultBehaviors, sumPower } from './state/utils'
+import Unit from './Unit'
 
 const SetUp = () => {
   const roster = useRoster()
@@ -28,7 +29,7 @@ const SetUp = () => {
             <option value="Skittish">Skittish</option>
           </select>
         </td>
-        <td>{unit.displayName}</td>
+        <td><Unit unit={unit} /></td>
       </tr>))}
     </tbody>
     <tfoot>

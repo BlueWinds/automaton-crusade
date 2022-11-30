@@ -11,20 +11,36 @@ h1, h2, h3, h4, h5, h6 {
   .container {
     max-width: 100%;
   }
+
+  dialog article {
+    min-width: 90%;
+  }
 }
 @media (min-width: 768px) {
   .container {
     max-width: 95%;
+  }
+
+  dialog article {
+    min-width: 75%;
   }
 }
 @media (min-width: 992px) {
   .container {
     max-width: 90%;
   }
+
+  dialog article {
+    min-width: 60%;
+  }
 }
 @media (min-width: 1200px) {
   .container {
     max-width: 1130px;
+  }
+
+  dialog article {
+    min-width: 50%;
   }
 }
 
@@ -56,15 +72,19 @@ td, th {
 }
 
 .unit-list td:first-child, .unit-list th:first-child {
-  max-width: 9em;
+  width: 9em;
 }
 
 .unit-list td:nth-child(2), .unit-list th:nth-child(2) {
-  max-width: 9em;
+  width: 6em;
 }
 
 .unit-list [data-dead=true] td {
   text-decoration: line-through;
+}
+
+.button-group ul {
+  margin: auto !important;
 }
 
 .button-group li {
@@ -180,3 +200,11 @@ article p:last-child {
   width: auto;
 }
 
+[data-tooltip]::before, [data-tooltip]::after {
+  min-width: 15em;
+  white-space: pre-wrap;
+}
+
+a.close {
+  font-size: 0;
+}

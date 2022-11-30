@@ -1,12 +1,13 @@
 import { useDispatch } from 'react-redux'
 
 import { useGame } from './state/utils'
+import Unit from './Unit'
 
 const ActiveUnit = ({ unit }) => {
   const dispatch = useDispatch()
 
   return (<tr data-dead={unit.dead}>
-    <td>{unit.displayName}</td>
+    <td><Unit unit={unit} /></td>
     <td>{unit.retinueOf ? <span>Retinue: {unit.retinueOf}<br />(Base: {unit.behavior})</span> : unit.behavior}</td>
     <td>{unit.dead ? '' : <UnitAction unit={unit} />}</td>
     <td className="unit-status">

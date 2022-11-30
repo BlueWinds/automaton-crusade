@@ -4,12 +4,14 @@ import defaultBehaviors from './defaultBehaviors'
 import roster from './roster'
 import game from './game'
 import help from './help'
+import modal from './modal'
 
 const combined = combineReducers({
   defaultBehaviors,
   roster,
   game,
   help,
+  modal,
 });
 
 export default function rootReducer(state = {}, action) {

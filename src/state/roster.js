@@ -44,10 +44,14 @@ const parseArmyList = (armyList) => {
       displayName: name,
       power: powerLevel(unit),
       keywords: {},
+      abilities: {},
     }
 
     units.push(u);
-    [...unit.querySelectorAll('category')].forEach(c => u.keywords[c.getAttribute('name')] = true)
+    [...unit.querySelectorAll('category')].forEach(c => u.keywords[c.getAttribute('name')] = true);
+    [...unit.querySelectorAll('[typeName="Abilities"]')].forEach(a => {
+      u.abilities[a.getAttribute('name')] = a.querySelector('characteristic[name="Description"]').innerHTML
+    })
   })
 
   Array.from(xml.querySelectorAll('force > selections > [type="unit"]')).forEach(unit => {
@@ -64,11 +68,15 @@ const parseArmyList = (armyList) => {
       name: unit.getAttribute('name'),
       displayName: name,
       power: powerLevel(unit),
-      keywords: {}
+      keywords: {},
+      abilities: {},
     }
 
     units.push(u);
-    [...unit.querySelectorAll('category')].forEach(c => u.keywords[c.getAttribute('name')] = true)
+    [...unit.querySelectorAll('category')].forEach(c => u.keywords[c.getAttribute('name')] = true);
+    [...unit.querySelectorAll('[typeName="Abilities"]')].forEach(a => {
+      u.abilities[a.getAttribute('name')] = a.querySelector('characteristic[name="Description"]').innerHTML
+    })
   })
 
   return units

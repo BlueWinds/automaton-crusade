@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useGame, sumPower } from './state/utils'
 import ActiveUnit from './ActiveUnit'
 
-const Phase = () => {
+export const Phase = () => {
   const { phase } = useGame()
   const dispatch = useDispatch()
   const onClick = (newPhase) => () => {
@@ -17,6 +17,7 @@ const Phase = () => {
     <ul>
       <li><button className={phase === 'Deploy' ? 'outline' : 'outline secondary'} onClick={onClick('Deploy')}>Deploy</button></li>
       <li><button className={phase === 'Move' ? 'outline' : 'outline secondary'} onClick={onClick('Move')}>Move</button></li>
+      <li><button className={phase === 'Psychic' ? 'outline' : 'outline secondary'} onClick={onClick('Psychic')}>Psychic</button></li>
       <li><button className={phase === 'Shoot' ? 'outline' : 'outline secondary'} onClick={onClick('Shoot')}>Shoot</button></li>
       <li><button className={phase === 'Charge' ? 'outline' : 'outline secondary'} onClick={onClick('Charge')}>Charge</button></li>
     </ul>
@@ -31,7 +32,7 @@ export const ActiveUnitTable = () => {
       <tr>
         <td><span data-tooltip={`${sumPower(units)} PL`}>Units</span></td>
         <th>Behavior</th>
-        <th id="top-of-turn"><Phase /></th>
+        <th></th>
         <th><span data-tooltip="Track unit's status between turns">Status</span></th>
       </tr>
     </thead>
@@ -42,7 +43,7 @@ export const ActiveUnitTable = () => {
       <tr>
         <td><span data-tooltip={`${sumPower(units)} PL`}>Units</span></td>
         <td>Behavior</td>
-        <th><Phase /></th>
+        <th></th>
         <th><span data-tooltip="Track unit's status between turns">Status</span></th>
       </tr>
     </tfoot>
