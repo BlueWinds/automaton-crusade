@@ -36,6 +36,7 @@ const generateList = ({ roster, defaultBehaviors, game }) => {
   const newList = [...roster.map(u => ({
     ...u,
     behavior: randomBehavior(u, defaultBehaviors),
+    defaultBehavior: defaultBehaviors[u.name],
     action: '',
     retinue: '',
     retinueOf: '',
@@ -183,7 +184,11 @@ const generateAction = (phase, spawnPoints, unit, retinueOf) => {
     }
 
     if (unit.behavior === 'Tactical') {
-      return 'If within 12" of a player unit, and charging would not break the enemy’s control of an objective or interrupt an action, it will attempt to charge the closest player unit (and no others).'
+      if (unit.defaultBehavior === 'Berserk') {
+        return 'If within 12" of a player unit, and charging would not break the enemy’s control of an objective or interrupt an action, it will attempt to charge the closest player unit (and no others).'
+      }
+
+      return 'The unit does not charge.'
     }
 
     if (unit.behavior === 'Berserk') {

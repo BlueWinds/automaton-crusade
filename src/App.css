@@ -1,9 +1,31 @@
 html {
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
+}
+
+@media (min-width: 576px) {
+  .container {
+    max-width: 100%;
+  }
+}
+@media (min-width: 768px) {
+  .container {
+    max-width: 95%;
+  }
+}
+@media (min-width: 992px) {
+  .container {
+    max-width: 90%;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1130px;
+  }
 }
 
 header {
@@ -34,11 +56,11 @@ td, th {
 }
 
 .unit-list td:first-child, .unit-list th:first-child {
-  width: 9em;
+  max-width: 9em;
 }
 
 .unit-list td:nth-child(2), .unit-list th:nth-child(2) {
-  width: 9em;
+  max-width: 9em;
 }
 
 .unit-list [data-dead=true] td {
@@ -93,7 +115,7 @@ button.small, nav button {
 }
 
 .unit-status {
-  width: 10em;
+  width: 8em;
 }
 
 .unit-status label {

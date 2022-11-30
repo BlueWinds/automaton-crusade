@@ -6,7 +6,12 @@ import ActiveUnit from './ActiveUnit'
 const Phase = () => {
   const { phase } = useGame()
   const dispatch = useDispatch()
-  const onClick = (newPhase) => () => (phase !== newPhase && dispatch({type: 'CHANGE_PHASE', phase: newPhase}))
+  const onClick = (newPhase) => () => {
+    if (phase === newPhase) { return }
+
+    document.getElementById("top-of-turn").scrollIntoView()
+    dispatch({type: 'CHANGE_PHASE', phase: newPhase})
+  }
 
   return (<nav className="button-group">
     <ul>
@@ -26,7 +31,7 @@ export const ActiveUnitTable = () => {
       <tr>
         <td><span data-tooltip={`${sumPower(units)} PL`}>Units</span></td>
         <th>Behavior</th>
-        <th><Phase /></th>
+        <th id="top-of-turn"><Phase /></th>
         <th><span data-tooltip="Track unit's status between turns">Status</span></th>
       </tr>
     </thead>
@@ -92,7 +97,6 @@ const EnemyArmy = () => {
         <button name="generate" className="outline" onClick={() => dispatch({type: 'GENERATE_ARMY', state})} disabled={!hasAllUnitBehaviors}>Generate</button>
       </label>
     </div>
-    <div></div>
   </div>)
 }
 
