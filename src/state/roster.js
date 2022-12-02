@@ -26,58 +26,45 @@ const parseArmyList = (armyList) => {
   const displayNames = {}
   const units = []
 
+  const parseUnit = unit => {
+    let name = displayName(unit)
+    if (displayNames[name]) {
+      let i = 2
+      name += ' #'
+      while (displayNames[name + i]) { i++ }
+      name += i
+    }
+    displayNames[name] = true
+
+    const u = {
+      name: unit.getAttribute('name'),
+      displayName: name,
+      power: powerLevel(unit),
+      keywords: {},
+      abilities: {},
+      psychicPowers: [],
+    };
+
+    for (const c of unit.querySelectorAll('category')) {
+      u.keywords[c.getAttribute('name')] = true
+    }
+
+    for (const a of unit.querySelectorAll('[typeName="Abilities"]')) {
+      u.abilities[a.getAttribute('name')] = a.querySelector('characteristic[name="Description"]').innerHTML
+    }
+
+    for (const a of unit.querySelectorAll('[typeName="Psychic Power"]')) {
+      u.psychicPowers.push(a.getAttribute('name'))
+    }
+
+    return u
+  }
+
   const parser = new DOMParser();
   const xml = parser.parseFromString(armyList, "text/xml");
 
-  Array.from(xml.querySelectorAll('force > selections > [type="model"]')).forEach(unit => {
-    let name = displayName(unit)
-    if (displayNames[name]) {
-      let i = 2
-      name += ' #'
-      while (displayNames[name + i]) { i++ }
-      name += i
-    }
-    displayNames[name] = true
-
-    const u = {
-      name: unit.getAttribute('name'),
-      displayName: name,
-      power: powerLevel(unit),
-      keywords: {},
-      abilities: {},
-    }
-
-    units.push(u);
-    [...unit.querySelectorAll('category')].forEach(c => u.keywords[c.getAttribute('name')] = true);
-    [...unit.querySelectorAll('[typeName="Abilities"]')].forEach(a => {
-      u.abilities[a.getAttribute('name')] = a.querySelector('characteristic[name="Description"]').innerHTML
-    })
-  })
-
-  Array.from(xml.querySelectorAll('force > selections > [type="unit"]')).forEach(unit => {
-    let name = displayName(unit)
-    if (displayNames[name]) {
-      let i = 2
-      name += ' #'
-      while (displayNames[name + i]) { i++ }
-      name += i
-    }
-    displayNames[name] = true
-
-    const u = {
-      name: unit.getAttribute('name'),
-      displayName: name,
-      power: powerLevel(unit),
-      keywords: {},
-      abilities: {},
-    }
-
-    units.push(u);
-    [...unit.querySelectorAll('category')].forEach(c => u.keywords[c.getAttribute('name')] = true);
-    [...unit.querySelectorAll('[typeName="Abilities"]')].forEach(a => {
-      u.abilities[a.getAttribute('name')] = a.querySelector('characteristic[name="Description"]').innerHTML
-    })
-  })
+  units.push(...Array.from(xml.querySelectorAll('force > selections > [type="model"]')).map(parseUnit))
+  units.push(...Array.from(xml.querySelectorAll('force > selections > [type="unit"]')).map(parseUnit))
 
   return units
 }
@@ -86,6 +73,15 @@ export default function roster(state = defaultState, action) {
   switch (action.type) {
     case 'LOAD_ROSTER':
       return parseArmyList(action.armyList)
+    default:
+      return state
+  }
+}
+
+export const rosterXML = (state = '', action) => {
+  switch (action.type) {
+    case 'LOAD_ROSTER':
+      return action.armyList
     default:
       return state
   }

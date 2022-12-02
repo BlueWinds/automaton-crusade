@@ -2,9 +2,12 @@
 
 The enemy army does not use Command Points, and is not organized into Detachments, but is considered Battle Forged for the purposes of all other rules.
 
-Looking at the list below, count up the Crusade points the enemy is deploying, and compare them to the combined crusade points of each deployed player army.
+Count up the the combined crusade points of each deployed player army. Since the enemy does not use normal Stratagems and we do not track requisitions, battle honors, or other crusade resources for the enemy, they gain access instead to the following special Stratagem, and a store of Command Points (equal to the Crusade Points the players bring) with which to use it.
 
-- If the enemy has more Crusade Points, players gain command points as normal for Crusade rules.
-- If the players have more Crusade Points, then for every two crusade points they have over the enemy, the players lose one Command Point at the start of battle.
+##### Send In The Next Wave - Variable CP
 
-Basically, since the enemy does not use command points, player Crusade Blessings can go negative.
+*There are always more Orks.*
+
+Whenever an enemy unit is destroyed, if it has them available, the enemy will spend CP equal to the Power Level of the destroyed unit to send it into Strategic Reserves rather than removing it from play. This stratagem can be used any number of times in a turn.
+
+The app has a helper to handle this - when you check "Dead" for an enemy unit, the app will deduct the appropriate cost and send it to reserves. instead.

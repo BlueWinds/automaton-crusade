@@ -25,7 +25,7 @@ export const Phase = () => {
 }
 
 export const ActiveUnitTable = () => {
-  const { units } = useGame()
+  const { units, actionOrder } = useGame()
 
   return (<table className="unit-list">
     <thead>
@@ -37,7 +37,7 @@ export const ActiveUnitTable = () => {
       </tr>
     </thead>
     <tbody>
-      {units.map((unit, i) => (<ActiveUnit key={i} unit={unit} />))}
+      {actionOrder.map((name, i) => (<ActiveUnit key={i} unit={units[name]} />))}
     </tbody>
     <tfoot>
       <tr>
@@ -71,7 +71,7 @@ export const SpawnPoints = () => {
 const EnemyArmy = () => {
   const dispatch = useDispatch()
   const state = useSelector(state => state)
-  const { playerPower, enemyBonus } = state.game
+  const { playerPower, enemyBonus, crusadePoints } = state.game
 
   const hasAllUnitBehaviors = state.roster.every(unit => state.defaultBehaviors[unit.name])
   const totalEnemyPower = sumPower(state.roster)
@@ -79,19 +79,24 @@ const EnemyArmy = () => {
 
   return (<div className="grid">
     <div>
-      <label htmlFor="playerPower">Player Power Level
-        <input type="number" min="10" max={totalEnemyPower / (enemyBonus / 100  + 1)} value={playerPower} step="10" name="playerPower" onChange={e => dispatch({ type: 'PLAYER_POWER', playerPower: parseInt(e.target.value)})} />
+      <label>Player Power Level
+        <input type="number" min="10" max={totalEnemyPower / (enemyBonus / 100  + 1)} value={playerPower} step="10" onChange={e => dispatch({ type: 'PLAYER_POWER', playerPower: parseInt(e.target.value)})} />
       </label>
     </div>
     <div>
-      <label htmlFor="enemyBonus">Enemy Bonus</label>
-      <select name="enemyBonus" value={enemyBonus} onChange={e => dispatch({type: 'ENEMY_BONUS', enemyBonus: parseInt(e.target.value, 10)})} >
+      <label>Enemy Bonus</label>
+      <select value={enemyBonus} onChange={e => dispatch({type: 'ENEMY_BONUS', enemyBonus: parseInt(e.target.value, 10)})} >
         <option value="0">0%</option>
         <option value="15" disabled={maxEnemyBonus < 15}>15%</option>
         <option value="25" disabled={maxEnemyBonus < 25}>25%</option>
         <option value="33" disabled={maxEnemyBonus < 34}>33%</option>
         <option value="50" disabled={maxEnemyBonus < 50}>50%</option>
       </select>
+    </div>
+    <div>
+      <label>Player Crusade Points
+        <input type="number" min="0" value={crusadePoints} step="1" onChange={e => dispatch({ type: 'CRUSADE_POINTS', crusadePoints: parseInt(e.target.value)})} />
+      </label>
     </div>
     <div>
       <label htmlFor="generate" data-tooltip={hasAllUnitBehaviors ? undefined : "Select the basic behavior of all units before generating an enemy list."}>Let's go!

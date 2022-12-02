@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux'
 
 import defaultBehaviors from './defaultBehaviors'
-import roster from './roster'
+import roster, { rosterXML } from './roster'
 import game from './game'
 import help from './help'
 import modal from './modal'
@@ -9,6 +9,7 @@ import modal from './modal'
 const combined = combineReducers({
   defaultBehaviors,
   roster,
+  rosterXML,
   game,
   help,
   modal,

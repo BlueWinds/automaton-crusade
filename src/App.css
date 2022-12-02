@@ -118,16 +118,16 @@ button.small, nav button {
   margin: 5px;
 }
 
-.retinue {
+.retinue, .transport {
   display: inline;
 }
 
-.retinue span {
+.retinue span, .transport span {
   position: absolute;
   font-size: 0.6em;
 }
 
-.retinue select {
+.retinue select, .transport select {
   margin: 0.8em 0.5em 0px 0px;
   padding: 5px;
   width: 12em;
@@ -135,7 +135,7 @@ button.small, nav button {
 }
 
 .unit-status {
-  width: 8em;
+  width: 7em;
 }
 
 .unit-status label {
@@ -207,4 +207,12 @@ article p:last-child {
 
 a.close {
   font-size: 0;
+}
+
+dialog details {
+  white-space: pre-wrap;
+}
+
+strike[data-tooltip] {
+  text-decoration: line-through;
 }

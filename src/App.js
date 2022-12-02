@@ -6,6 +6,7 @@ import {
   TextWriter,
   ZipReader,
 } from '@zip.js/zip.js'
+import isEmpty from 'lodash/fp/isEmpty'
 
 import '@picocss/pico'
 import './App.css'
@@ -20,14 +21,12 @@ import spawnPointsMd from './markdown/spawnPoints.md'
 import retinuesMd from './markdown/retinues.md'
 import deploymentMd from './markdown/deployment.md'
 import playingMd from './markdown/playing.md'
-import postBattleMd from './markdown/postBattle.md'
 import { sumPower } from './state/utils'
 
 import Help, { HideHelp } from './Help'
 import SetUp from './SetUp'
 import EnemyArmy, {ActiveUnitTable, Phase, SpawnPoints} from './EnemyArmy'
 import EnemyStrategem from './EnemyStrategem'
-import PostBattle from './PostBattle'
 import Modal from './Modal'
 
 function App() {
@@ -85,7 +84,7 @@ function App() {
           <summary>Play a game</summary>
           <Help>{musterMd}</Help>
           <EnemyArmy />
-          {units.length ? <>
+          {!isEmpty(units) ? <>
             <Help>{muster2Md}</Help>
             <Help>{spawnPointsMd}</Help>
             <SpawnPoints />
@@ -97,11 +96,6 @@ function App() {
             <ActiveUnitTable />
             <Phase />
           </>: ''}
-        </details>
-        <details>
-          <summary>After Battle</summary>
-          <Help>{postBattleMd}</Help>
-          <PostBattle />
         </details>
       </article>
     </div>
