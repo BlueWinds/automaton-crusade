@@ -27,13 +27,12 @@ const parseArmyList = (armyList) => {
   const units = []
 
   const parseUnit = unit => {
-    let name = displayName(unit)
-    if (displayNames[name]) {
-      let i = 2
-      name += ' #'
-      while (displayNames[name + i]) { i++ }
-      name += i
-    }
+    let name = displayName(unit) + ' #'
+
+    let i = 1
+    while (displayNames[name + i]) { i++ }
+    name += i
+
     displayNames[name] = true
 
     const u = {
@@ -65,6 +64,12 @@ const parseArmyList = (armyList) => {
 
   units.push(...Array.from(xml.querySelectorAll('force > selections > [type="model"]')).map(parseUnit))
   units.push(...Array.from(xml.querySelectorAll('force > selections > [type="unit"]')).map(parseUnit))
+
+  units.forEach(u => {
+    if (u.displayName.match(' #1') && !displayNames[u.displayName.replace(' #1', ' #2')]) {
+      u.displayName = u.displayName.replace(' #1', '')
+    }
+  })
 
   return units
 }

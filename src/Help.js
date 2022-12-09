@@ -29,7 +29,7 @@ const Help = ({children}) => {
   return (<article>
     <header>
       <ReactMarkdown>{title}</ReactMarkdown>
-      <button className="small outline" onClick={() => dispatch({type: 'CLOSE_HELP', title})}>x</button>
+      <button className="small outline close-help" onClick={() => dispatch({type: 'CLOSE_HELP', title})}>x</button>
     </header>
     <ReactMarkdown>{rest.join('\n')}</ReactMarkdown>
   </article>)
