@@ -216,3 +216,8 @@ dialog details {
 strike[data-tooltip] {
   text-decoration: line-through;
 }
+
+button.reroll-action {
+  float: left;
+  margin-right: 10px;
+}

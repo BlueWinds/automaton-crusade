@@ -19,15 +19,15 @@ const ActiveUnit = ({ unit }) => {
     <td className="unit-status">
       <label>
         <span data-tooltip="Mark the unit as dead">Dead</span>
-        <input type="checkbox" checked={unit.dead} onChange={e => dispatch({type: 'SET_DEAD', unit, dead: e.target.checked})} />
+        <input className="dead" type="checkbox" checked={unit.dead} onChange={e => dispatch({type: 'SET_DEAD', unit, dead: e.target.checked})} />
       </label>
       <label>
         <span data-tooltip="Mark the unit as in reserves; It may deploy in future movement phases">Rsrvd</span>
-        <input type="checkbox" checked={unit.reserved} onChange={e => dispatch({type: 'SET_RESERVED', unit, reserved: e.target.checked})} />
+        <input className="reserved" type="checkbox" checked={unit.reserved} onChange={e => dispatch({type: 'SET_RESERVED', unit, reserved: e.target.checked})} />
       </label>
       {unit.transport  && <label>
-        <span data-tooltip="Mark the unit as in reserves; It may deploy in future movement phases">Embarked</span>
-        <input type="checkbox" checked={unit.embarked} onChange={e => dispatch({type: 'SET_EMBARKED', unit, embarked: e.target.checked})} />
+        <span data-tooltip="Mark the unit as embarked in its transport">Embarked</span>
+        <input className="embarked" type="checkbox" checked={unit.embarked} onChange={e => dispatch({type: 'SET_EMBARKED', unit, embarked: e.target.checked})} />
       </label>}
     </td>
   </tr>)
@@ -42,7 +42,7 @@ const characterCantActYet = (unit, units, phase) => {
 
 const cantActBecauseReserved = (unit, phase, units) => {
   if (unit.embarked && units[unit.transport].reserved) { return "Reserved units stay in their transports" }
-  if (unit.reserved && phase ==='Move' && !Object.values(units).every(u => u.reserved || u.action)) { return "Reserves move last" }
+  if (unit.reserved && phase ==='Move' && !Object.values(units).every(u => u.dead || u.reserved || u.action)) { return "Reserves move last" }
   if (unit.reserved && (phase === 'Shoot' || phase === 'Charge')) { return "In reserves" }
 }
 
@@ -50,7 +50,12 @@ const UnitAction = ({ unit }) => {
   const { phase, units } = useGame()
   const dispatch = useDispatch()
 
-  if (unit.action) { return <ReactMarkdown>{unit.action}</ReactMarkdown> }
+  if (unit.action) {
+    return <>
+      <button className="outline small reroll-action" onClick={() => dispatch({type: 'UNIT_ACT', unit})}>⟳</button>
+      <ReactMarkdown>{unit.action}</ReactMarkdown>
+    </>
+  }
 
   return (<>
     {phase === 'Deploy' && unit.keywords['Character'] && <label className="retinue">
@@ -67,7 +72,8 @@ const UnitAction = ({ unit }) => {
         {Object.values(units).filter(u => !u.keywords['Transport']).map(u => <option key={u.displayName} value={u.displayName} disabled={u.transport && u.transport !== unit.displayName}>{u.displayName}</option>)}
       </select>
     </label>}
-    {cantActBecauseReserved(unit, phase, units) || characterCantActYet(unit, units, phase) || <button className="outline small" onClick={() => dispatch({type: 'UNIT_ACT', unit})}>+</button>}
+    {cantActBecauseReserved(unit, phase, units) || characterCantActYet(unit, units, phase) || ''}
+    <button className="outline small roll-action" onClick={() => dispatch({type: 'UNIT_ACT', unit})}>+</button>
   </>)
 }
 

@@ -66,11 +66,9 @@ const actionOrder = (phase, units) => {
   const sort = phase === 'Deploy' ? deploySort : turnSort
   const sortFn = (u1, u2) => {
     const mapFn = (s, i) => ((s(units[u1]) - s(units[u2])) << i)
-    console.log(u1, units[u1].embarked, units[u1].reserved, u2, units[u2].embarked, units[u2].reserved,sort.map(mapFn))
     return sum(sort.map(mapFn))
   }
 
-  console.log(Object.keys(units).sort(sortFn))
   return Object.keys(units).sort(sortFn)
 }
 
@@ -83,8 +81,6 @@ const generateAction = (unit, game) => {
 
   const phase = game.phase
   const [behavior] = getCurrentBehavior(unit, game.units)
-
-  console.log(unit, transport, retinue, phase, behavior)
 
   if (phase === 'Deploy') {
     if (transport && transport.reserved) {
@@ -305,6 +301,7 @@ export default function defaultBehaviors(state = defaultState, action) {
       }
     }
 
+
     case 'SET_RETINUE': {
       const c = action.character.displayName
       const u = action.unit?.displayName || ''
@@ -351,14 +348,34 @@ export default function defaultBehaviors(state = defaultState, action) {
     }
 
     case 'SET_EMBARKED':
-      console.log(action.unit.displayName, get(`units.${action.unit.displayName}.embarked`, state), set(`units.${action.unit.displayName}.embarked`, action.embarked, state).units[action.unit.displayName])
       return set(`units.${action.unit.displayName}.embarked`, action.embarked, state)
 
-    case 'SET_RESERVED':
-      return update(`units.${action.unit.displayName}`, assign({action: '', reserved: action.reserved}), state)
+    case 'SET_RESERVED': {
+      let newState = update(`units.${action.unit.displayName}`, assign({action: '', reserved: action.reserved}), state)
 
-    case 'SET_DEAD':
-      return update(`units.${action.unit.displayName}`, assign({action: '', dead: action.dead}), state)
+      let transport = state.units[action.unit.transport]
+      if (action.unit.embarked && !transport.dead) {
+        newState = update(`units.${transport.displayName}`, assign({action: '', reserved: action.reserved}), newState)
+      }
+
+      let transporting = state.units[action.unit.transporting]
+      if (transporting?.embarked &&  !transporting.dead) {
+        newState = update(`units.${transporting.displayName}`, assign({action: '', reserved: action.reserved}), newState)
+      }
+
+      return newState
+    }
+
+    case 'SET_DEAD': {
+      let newState = update(`units.${action.unit.displayName}`, assign({action: '', dead: action.dead}), state)
+
+      let transporting = state.units[action.unit.transporting]
+      if (transporting?.embarked) {
+        newState = update(`units.${transporting.displayName}`, assign({embarked: false}), newState)
+      }
+
+      return newState
+    }
 
     default:
       return state
