@@ -41,7 +41,11 @@ const parseArmyList = (armyList) => {
       power: powerLevel(unit),
       keywords: {},
       abilities: {},
-      psychicPowers: [],
+      psychicPowers: {},
+      deepstriker: !!unit.innerHTML.match("the Reinforcements step"),
+      commandPhase: !!unit.innerHTML.match("In your Command phase"),
+      stats: {},
+      weapons: {},
     };
 
     for (const c of unit.querySelectorAll('category')) {
@@ -53,7 +57,36 @@ const parseArmyList = (armyList) => {
     }
 
     for (const a of unit.querySelectorAll('[typeName="Psychic Power"]')) {
-      u.psychicPowers.push(a.getAttribute('name'))
+      u.psychicPowers[a.getAttribute('name')] = {
+        warpCharge: a.querySelector('characteristic[name="Warp Charge"]').innerHTML,
+        range: a.querySelector('characteristic[name="Range"]').innerHTML,
+        details: a.querySelector('characteristic[name="Details"]').innerHTML,
+      }
+    }
+
+    for (const s of unit.querySelectorAll('profile[typeName="Unit"]')) {
+      u.stats[s.getAttribute('name')] = {
+        move: s.querySelector('characteristic[name="M"]').innerHTML,
+        weaponSkill: s.querySelector('characteristic[name="WS"]').innerHTML,
+        ballisticSkill: s.querySelector('characteristic[name="BS"]').innerHTML,
+        strength: s.querySelector('characteristic[name="S"]').innerHTML,
+        toughness: s.querySelector('characteristic[name="T"]').innerHTML,
+        wounds: s.querySelector('characteristic[name="W"]').innerHTML,
+        attacks: s.querySelector('characteristic[name="A"]').innerHTML,
+        leadership: s.querySelector('characteristic[name="Ld"]').innerHTML,
+        save: s.querySelector('characteristic[name="Save"]').innerHTML,
+      }
+    }
+
+    for (const s of unit.querySelectorAll('profile[typeName="Weapon"]')) {
+      u.weapons[s.getAttribute('name')] = {
+        range: s.querySelector('characteristic[name="Range"]').innerHTML,
+        type: s.querySelector('characteristic[name="Type"]').innerHTML,
+        strength: s.querySelector('characteristic[name="S"]').innerHTML,
+        armorPierce: s.querySelector('characteristic[name="AP"]').innerHTML,
+        damage: s.querySelector('characteristic[name="D"]').innerHTML,
+        abilities: s.querySelector('characteristic[name="Abilities"]').innerHTML,
+      }
     }
 
     return u

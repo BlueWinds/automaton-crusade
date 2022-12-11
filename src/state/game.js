@@ -101,11 +101,17 @@ const generateAction = (unit, game) => {
       return `Deploy as near as possible to ${retinue.displayName}.`
     }
 
-    if (rollD6() >= 5) {
+    if (unit.deepstriker) {
+      if (rollD6() >= 3) {
+        unit.reserved = true
+        return 'Place the unit ready ready to deep-strike using its special rule if able. Otherwise, reroll.'
+      }
+    } else if (rollD6() >= 5) {
       unit.reserved = true
-      return 'Place unit in reserve.'
+      return 'Place unit in strategic reserve.'
     }
 
+    unit.reserved = false
     return `Set up ${rollD6() + rollD6()}" ${rollDirection()} from spawn point ${Math.ceil(Math.random() * game.spawnPoints.length)}.`
   }
 
@@ -157,24 +163,43 @@ const generateAction = (unit, game) => {
       }
 
       if (rollD6() >= 5) {
-        return 'The unit remains in reserve.'
+        return 'The unit remains in reserves.'
       }
 
       unit.reserved = false
-      if (behavior === 'Erratic') {
-        return `Select a random board edge the unit can arrive from. It arrives ${roll2D6()}" to the ${rollD6() > 4 ? 'left' : 'right'} of the center of that edge, as far onto the battlefield as possible.`
-      }
 
-      if (behavior === 'Tactical') {
-        return `Deploy as near as possible to an objective the enemy does not control. If there are multiple objectives equally distant from a board edge the enemy does not control, choose one to deploy near at random.`
-      }
+      if (unit.deepstriker) {
+        if (behavior === 'Erratic') {
+          return `If it is the first turn, the unit remains in reserves. Otherwise, locate all general areas of the board the unit could deep-strike into. It arrives at a random one, as close to a player unit as possible.`
+        }
 
-      if (behavior === 'Berserk') {
-        return `Deploy as close as possible to a player unit. If it can deploy within 6" of multiple player units, determine which one it will deploy near randomly.`
-      }
+        if (behavior === 'Tactical') {
+          return `If it is the first turn, the unit remains in reserves. Otherwise, locate all general areas of the board it could arrive in that would place it close to an objective the enemy does not control. It arrives at a random one, as close to an objective as possible.`
+        }
 
-      if (behavior === 'Skittish') {
-        return `Locate all pieces of cover within 12" of a valid board edge, from which the unit can fire at a player unit. Select one at random. The unit will deploy as near (or in) this piece of cover as possible.`
+        if (behavior === 'Berserk') {
+          return `If it is the first turn, the unit remains in reserves. Otherwise, locate all general areas of the board the unit could deep-strike into. It arrives in one at random, as close to as many player units as possible.`
+        }
+
+        if (behavior === 'Skittish') {
+          return `If it is the first turn, the unit remains in reserves. Otherwise, locate all pieces of cover the unit could deep-strike into, from which the unit can fire at a player unit. The unit arrives at a random one.`
+        }
+      } else {
+        if (behavior === 'Erratic') {
+          return `If it is the first turn, the unit remains in reserves. Otherwise, select a random board edge the unit can arrive from. It arrives ${roll2D6()}" to the ${rollD6() > 4 ? 'left' : 'right'} of the center of that edge, as far onto the battlefield as possible.`
+        }
+
+        if (behavior === 'Tactical') {
+          return `If it is the first turn, the unit remains in reserves. Otherwise, deploy as near as possible to an objective the enemy does not control. If there are multiple objectives equally distant from a board edge the enemy does not control, choose one to deploy near at random.`
+        }
+
+        if (behavior === 'Berserk') {
+          return `If it is the first turn, the unit remains in reserves. Otherwise, deploy as close as possible to a player unit. If it can deploy within 6" of multiple player units, determine which one it will deploy near randomly.`
+        }
+
+        if (behavior === 'Skittish') {
+          return `If it is the first turn, the unit remains in reserves. Otherwise, locate all pieces of cover within 12" of a valid board edge, from which the unit can fire at a player unit. Select one at random. The unit will deploy as near (or in) this piece of cover as possible.`
+        }
       }
     }
 
@@ -213,9 +238,11 @@ const generateAction = (unit, game) => {
       return ' '
     }
 
-    const powers = shuffle(unit.psychicPowers).join('\n- ')
+    const powers = shuffle(Object.entries(unit.psychicPowers)).map(([name, p]) => {
+      return `- ${name} (Warp Charge ${p.warpCharge}, ${p.range}): ${p.details.replace(/\n/g, '\n  ')}`
+    }).join('\n')
 
-    return `The unit uses as many psychic powers as it's able and are relevent, in this order:\n- ${powers}`
+    return `The unit uses as many psychic powers as it's able and are relevent, in this order:\n${powers}`
   }
 
   if (phase === 'Shoot') {

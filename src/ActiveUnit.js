@@ -8,13 +8,13 @@ const ActiveUnit = ({ unit }) => {
   const { phase, units } = useGame()
   const dispatch = useDispatch()
 
-  if (phase === 'Psychic' && !unit.psychicPowers?.length) { return null }
+  if (phase === 'Psychic' && !Object.keys(unit.psychicPowers).length) { return null }
 
   const [behavior, why] = getCurrentBehavior(unit, units)
 
   return (<tr data-dead={unit.dead}>
     <td><Unit unit={unit} /></td>
-    <td>{behavior !== unit.behavior ? <span>{behavior}<br /><strike data-tooltip={why}>{unit.behavior}</strike></span> : unit.behavior}</td>
+    <td><ActionButton unit={unit} /> {behavior !== unit.behavior ? <span>{behavior}<br /><strike data-tooltip={why}>{unit.behavior}</strike></span> : unit.behavior}</td>
     <td>{unit.dead ? '' : <UnitAction unit={unit} />}</td>
     <td className="unit-status">
       <label>
@@ -46,15 +46,18 @@ const cantActBecauseReserved = (unit, phase, units) => {
   if (unit.reserved && (phase === 'Shoot' || phase === 'Charge')) { return "In reserves" }
 }
 
+const ActionButton = ({ unit }) => {
+  const dispatch = useDispatch()
+
+  return <button className="outline small roll-action" onClick={() => dispatch({type: 'UNIT_ACT', unit})}>{unit.action ? '⟳' : '+'}</button>
+}
+
 const UnitAction = ({ unit }) => {
   const { phase, units } = useGame()
   const dispatch = useDispatch()
 
   if (unit.action) {
-    return <>
-      <button className="outline small reroll-action" onClick={() => dispatch({type: 'UNIT_ACT', unit})}>⟳</button>
-      <ReactMarkdown>{unit.action}</ReactMarkdown>
-    </>
+    return <ReactMarkdown>{unit.action}</ReactMarkdown>
   }
 
   return (<>
@@ -73,7 +76,6 @@ const UnitAction = ({ unit }) => {
       </select>
     </label>}
     {cantActBecauseReserved(unit, phase, units) || characterCantActYet(unit, units, phase) || ''}
-    <button className="outline small roll-action" onClick={() => dispatch({type: 'UNIT_ACT', unit})}>+</button>
   </>)
 }
 

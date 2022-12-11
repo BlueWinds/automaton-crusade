@@ -209,15 +209,14 @@ a.close {
   font-size: 0;
 }
 
-dialog details {
-  white-space: pre-wrap;
+dialog table {
+  width: auto;
 }
 
 strike[data-tooltip] {
   text-decoration: line-through;
 }
 
-button.reroll-action {
-  float: left;
-  margin-right: 10px;
+button.roll-action {
+  width: 1.5em;
 }

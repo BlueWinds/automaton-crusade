@@ -27,7 +27,7 @@ export const Phase = () => {
 export const ActiveUnitTable = () => {
   const { units, actionOrder } = useGame()
 
-  return (<table className="unit-list">
+  return (<table className="unit-list" role="grid">
     <thead>
       <tr>
         <td><span data-tooltip={`${sumPower(units)} PL`}>Units</span></td>
@@ -54,7 +54,7 @@ export const SpawnPoints = () => {
   const { spawnPoints } = useGame()
   const dispatch = useDispatch()
 
-  return (<table className="spawn-points">
+  return (<table className="spawn-points" role="grid">
     <thead><tr>
       <th colSpan="2">
         <span data-tooltip="Place at least 4 spawn points">Spawn Points</span>

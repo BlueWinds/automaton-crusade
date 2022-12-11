@@ -7,7 +7,7 @@ const SetUp = () => {
   const defaultBehaviors = useDefaultBehaviors()
   const dispatch = useDispatch()
 
-  return (<table className="roster">
+  return (<table className="roster" role="grid">
     <thead>
       <tr>
         <th>Power</th>
@@ -30,6 +30,12 @@ const SetUp = () => {
           </select>
         </td>
         <td><Unit unit={unit} /></td>
+        <td className="unit-status">
+          <label>
+            <span data-tooltip="Mark the unit as capable of deep-striking (having a special rule letting it set up anywhere on the board in a Deployment phase)">Deep Striker</span>
+            <input className="deepstrike" type="checkbox" checked={unit.deepstriker} onChange={e => dispatch({type: 'SET_DEEPSTRIKER', unit, deepstriker: e.target.checked})} />
+          </label>
+        </td>
       </tr>))}
     </tbody>
     <tfoot>
