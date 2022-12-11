@@ -98,7 +98,7 @@ const generateAction = (unit, game) => {
     }
 
     if (retinue) {
-      return `Deploy as near as possible to ${retinue.displayName}.`
+      return `Deploy as near as possible to ${retinue.displayName}, seeking an ideal location from which to charge, fire, use pyschic powers or be in cover, as appropriate to the character.`
     }
 
     if (unit.deepstriker) {
@@ -125,7 +125,7 @@ const generateAction = (unit, game) => {
 
       if (retinue && !retinue.embarked) {
         unit.embarked = false
-        return `The character disembarks as close as possible to ${retinue.displayName}.`
+        return `The character disembarks as close as possible to ${retinue.displayName}, seeking an ideal location from which to charge, fire, use pyschic powers or be in cover, as appropriate to the character.`
       }
 
       if (behavior === 'Erratic') {
@@ -149,17 +149,17 @@ const generateAction = (unit, game) => {
     }
 
     if (retinue && retinue.reserved) {
-      return `Character remains in reserve alongside ${retinue.displayName}.`
+      return `The character remains in reserve alongside ${retinue.displayName}.`
     }
 
     if (retinue) {
-      return `Character moves as close as possible to ${retinue.displayName}.`
+      return `The character moves as close as possible to ${retinue.displayName}, seeking an ideal location from which to charge, fire, use pyschic powers or be in cover, as appropriate to the character.`
     }
 
     if (unit.reserved) {
       if (retinue && !retinue.reserved) {
         unit.reserved = false
-        return `Character deploys alongside ${retinue.displayName} (or as close as possible).`
+        return `Character deploys alongside ${retinue.displayName}, seeking an ideal location from which to charge, fire, use pyschic powers or be in cover, as appropriate to the character..`
       }
 
       if (rollD6() >= 5) {
