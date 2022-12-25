@@ -1,12 +1,6 @@
 import {useDispatch, useSelector} from 'react-redux'
 import ReactMarkdown from 'react-markdown'
 
-function htmlDecode(input){
-  var e = document.createElement('div');
-  e.innerHTML = input;
-  return e.childNodes[0].nodeValue;
-}
-
 const Modal = () => {
   const {type, data} = useSelector(state => state.modal)
   const dispatch = useDispatch()
@@ -76,7 +70,7 @@ const Modal = () => {
         </tbody>
       </table>
       <p><strong>Categories:</strong> <i>{Object.keys(data.keywords).join(', ')}</i></p>
-      {Object.entries((data.abilities || {})).map(([name, ability]) => <ReactMarkdown key={name}>{`**${name}:** ${ability}`}</ReactMarkdown>)}
+      {Object.entries((data.abilities || {})).map(([name, ability]) => <ReactMarkdown key={name}>{`**${name}:** ${ability.replace(/• /g, '- ')}`}</ReactMarkdown>)}
     </article>
   </dialog>)
 }

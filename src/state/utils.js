@@ -12,7 +12,7 @@ export const rollD6 = () => Math.ceil(Math.random() * 6)
 export const roll2D6 = () => rollD6() + rollD6()
 export const rollDirection = () => ['north', 'north-east', 'east', 'south-east', 'south', 'south-west', 'west', 'north-west'][Math.floor(Math.random() * 8)]
 
-const behaviors = ['Erratic', 'Tactical', 'Berserk', 'Skittish']
+export const behaviors = ['Erratic', 'Tactical', 'Berserk', 'Skittish']
 export const rollBehavior = (unit, unitBehaviors) => {
   let b = behaviors[Math.floor(Math.random() * 3)]
   if (b === 'Berserk') {
@@ -64,4 +64,10 @@ export const getCurrentBehavior = (unit, units) => {
   }
 
   return [unit.behavior]
+}
+
+export function htmlDecode(s) {
+  var e = document.createElement('div')
+  e.innerHTML = s
+  return e.childNodes[0].nodeValue
 }

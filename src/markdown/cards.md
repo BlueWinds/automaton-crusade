@@ -1,5 +1,5 @@
 ### All Clear
-*The Enemy is preserving its resources, for now.*
+*The Enemy is preserving its resources. For now.*
 
 Nothing happens.
 
@@ -57,17 +57,17 @@ The enemy adds +1 to all wound rolls while shooting
 *They’re Everywhere!*
 *THEN SHOOT EVERYWHERE! HAHAHAHA!*
 
-The enemy rerolls all failed to-hit rolls while shooting
+The enemy rerolls all failed to-hit rolls while shooting this turn.
 
 ### Hail of Doom
 *This one is gonna hurt.*
 
-The enemy rerolls all failed to-wound rolls while shooting.
+The enemy rerolls all failed to-wound rolls while shooting this turn.
 
 ### Favorable Winds
 *Even the enemy gets lucky sometimes.*
 
-Enemy weapons have +6" range this turn
+Enemy weapons have +6" range this turn.
 
 ### Special Ammunition
 *They’re breaking out the good stuff, just for you.*
@@ -82,12 +82,12 @@ Enemy Psychers reroll all failed Psychic tests this turn.
 ### Eldritch Explosions
 *Despite common assertions, heads don’t usually explode. It’s more like... melting.*
 
-Enemy Psychic powers do one additional Mortal Wound to player units this turn.
+Enemy Psychic powers do one additional mortal wound to player units this turn.
 
 ### Shifting Tides
-*Enemy Psychers gain +1 on Psychic tests this turn.*
+*The warp pulls at our feet, seeking to pull us down and swallow us whole.*
 
-The warp pulls at our feet, seeking to pull us down and swallow us whole
+Enemy Psychers gain +1 on Psychic tests this turn.
 
 ### Split the Veil
 *This won’t be good for anyone, but worse for us.*
@@ -103,3 +103,8 @@ Until the next enemy command phase, player Pyschers gain -1 on Psychic tests.
 *In the name of The Emperor, trust not the witch to live.*
 
 Until the next enemy command phase, if an enemy psycher successfully Denys the Witch, the player Psycher immediately suffers Perils of the Warp.
+
+### Wail of Doom
+*Cover your ears - it'll help keep your brain from leaking.*
+
+A random player unit within line of sight of an enemy Psycher suffers 1d3 Mortal Wounds.

@@ -17,15 +17,13 @@ import setupMd from './markdown/setup.md'
 import rosterMd from './markdown/roster.md'
 import musterMd from './markdown/muster.md'
 import muster2Md from './markdown/muster2.md'
-import spawnPointsMd from './markdown/spawnPoints.md'
-import retinuesMd from './markdown/retinues.md'
 import deploymentMd from './markdown/deployment.md'
 import playingMd from './markdown/playing.md'
 import { sumPower } from './state/utils'
 
 import Help, { HideHelp } from './Help'
 import SetUp from './SetUp'
-import EnemyArmy, {ActiveUnitTable, Phase, SpawnPoints} from './EnemyArmy'
+import EnemyArmy, {ActiveUnitTable, Phase} from './EnemyArmy'
 import EnemyStrategem from './EnemyStrategem'
 import Modal from './Modal'
 
@@ -86,9 +84,6 @@ function App() {
           <EnemyArmy />
           {!isEmpty(units) ? <>
             <Help>{muster2Md}</Help>
-            <Help>{spawnPointsMd}</Help>
-            <SpawnPoints />
-            <Help>{retinuesMd}</Help>
             <Help>{deploymentMd}</Help>
             <Help>{playingMd}</Help>
             <EnemyStrategem />

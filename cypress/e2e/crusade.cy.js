@@ -115,22 +115,4 @@ describe('generating an army', () => {
 
     cy.unitRow('Trukk #4').find('.unit-status .reserved').should('not.be.checked')
   })
-
-  it.only('Sorts reserved units to last, and lets them act', () => {
-    cy.loadOrks()
-
-    cy.unitRow('Trukk #4').find('.unit-status .reserved').click()
-    cy.unitRow('Trukk #5').find('.unit-status .reserved').click()
-
-    cy.get('#top-of-turn').contains('Move').click()
-
-    cy.then(() => {
-//       const dice = stubRoller()
-//       dice.d6(3)
-    })
-
-//     cy.unitRow('20x Boyz').find('.roll-action').click()
-//     cy.unitRow('Deff Dreads').find('.roll-action').click()
-//     cy.unitRow('3x Killa Kans').find('.roll-action').click()
-  })
 })

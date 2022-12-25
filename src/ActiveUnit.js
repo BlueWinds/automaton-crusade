@@ -12,7 +12,7 @@ const ActiveUnit = ({ unit }) => {
 
   const [behavior, why] = getCurrentBehavior(unit, units)
 
-  return (<tr data-dead={unit.dead}>
+  return (<tr data-dead={unit.dead} data-retinue-of={!!unit.retinueOf} data-transport={!!unit.transport}>
     <td><Unit unit={unit} /></td>
     <td><ActionButton unit={unit} /> {behavior !== unit.behavior ? <span>{behavior}<br /><strike data-tooltip={why}>{unit.behavior}</strike></span> : unit.behavior}</td>
     <td>{unit.dead ? '' : <UnitAction unit={unit} />}</td>
@@ -34,10 +34,10 @@ const ActiveUnit = ({ unit }) => {
 }
 
 const characterCantActYet = (unit, units, phase) => {
-  if (!unit.retinue) { return '' }
-  const retinue = units[unit.retinue]
+  if (!unit.retinueOf) { return '' }
+  const character = units[unit.retinueOf]
 
-  return !retinue.dead && !retinue.action && `Characters ${phase.toLowerCase()} after their retinue`
+  return !character.dead && !character.action && `Retinues ${phase.toLowerCase()} after their character`
 }
 
 const cantActBecauseReserved = (unit, phase, units) => {

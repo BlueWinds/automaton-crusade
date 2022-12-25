@@ -1,17 +1,13 @@
 import shuffle from 'lodash/fp/shuffle'
 import set from 'lodash/fp/set'
-import get from 'lodash/fp/get'
 import mapValues from 'lodash/fp/mapValues'
 import badAssign from 'lodash/fp/assign'
-import concat from 'lodash/fp/concat'
 import flow from 'lodash/fp/flow'
-import drop from 'lodash/fp/drop'
 import update from 'lodash/fp/update'
-import sum from 'lodash/fp/sum'
 
 import cardsMd from '../markdown/cards.md'
 
-import { rollD6, roll2D6, rollDirection, rollList, getCurrentBehavior } from './utils'
+import { rollD6, roll2D6, rollDirection, rollList, getCurrentBehavior, behaviors } from './utils'
 
 const assign = badAssign.convert({ 'rearg': true })
 
@@ -22,7 +18,6 @@ const defaultState = {
   crusadePoints: 0,
   commandPoints: 0,
   enemyStrategem: '',
-  spawnPoints: [],
   units: {},
   actionOrder: [],
 }
@@ -40,44 +35,41 @@ const rollStrategem = (oldStrat) => {
   return strat
 }
 
-// Ordered from top down, with lower ones being more important.
-const turnSort = [
-  u => u.behavior === 'Erratic',
-  u => u.behavior === 'Tactical',
-  u => u.behavior === 'Brserk',
-  u => u.behavior === 'Skittish',
-  u => !!u.keywords.Transport,
-  u => !!u.retinue,
-  u => u.reserved,
-  u => u.reserved && !u.keywords.Transport,
-  u => u.dead,
-]
+const sortFn = (u1, u2) => {
+  if (!u1.dead && u2.dead) { return -1 }
+  if (u1.dead && !u2.dead) { return 1 }
 
-const deploySort = [
-  u => u.behavior === 'Erratic',
-  u => u.behavior === 'Tactical',
-  u => u.behavior === 'Brserk',
-  u => u.behavior === 'Skittish',
-  u => !u.keywords.Transport,
-  u => !!u.keywords.Character,
-]
+  if (!u1.reserved && u2.reserved) { return -1 }
+  if (u1.reserved && !u2.reserved) { return 1 }
 
-const actionOrder = (phase, units) => {
-  const sort = phase === 'Deploy' ? deploySort : turnSort
-  const sortFn = (u1, u2) => {
-    const mapFn = (s, i) => ((s(units[u1]) - s(units[u2])) << i)
-    return sum(sort.map(mapFn))
-  }
+  if (u1.transporting === u2.displayName) { return -1 }
+  if (u2.transporting === u1.displayName) { return 1 }
 
-  return Object.keys(units).sort(sortFn)
+  if (u1.transport && !u2.transport) { return -1 }
+  if (!u1.transport && u2.transport) { return 1 }
+
+  if (u1.retinueOf && !u2.retinueOf && u1.retinueOf !== u2.displayName) { return -1 }
+  if (!u1.retinueOf && u2.retinueOf && u2.retinueOf !== u1.displayName) { return 1 }
+
+  if (u1.keywords.Character && !u2.keywords.Character) { return -1 }
+  if (!u1.keywords.Character && u2.keywords.Character) { return 1 }
+
+  if (u1.keywords.Transport && !u2.keywords.Transport) { return -1 }
+  if (!u1.keywords.Transport && u2.keywords.Transport) { return 1 }
+
+  return behaviors.indexOf(u1.behavior) - behaviors.indexOf(u2.behavior)
 }
+
+const actionOrder = (units) => Object.keys(units).sort((name1, name2) => {
+  return sortFn(units[name1], units[name2])
+})
 
 const generateAction = (unit, game) => {
   let transport = game.units[unit.transport]
   if (transport?.dead || !unit.embarked) { transport = undefined }
 
-  let retinue = game.units[unit.retinue]
-  if (retinue?.dead) { retinue = undefined }
+  let character = game.units[unit.retinueOf]
+  if (character?.dead) { character = undefined }
 
   const phase = game.phase
   const [behavior] = getCurrentBehavior(unit, game.units)
@@ -88,17 +80,23 @@ const generateAction = (unit, game) => {
       return `Place unit in reserve, embarked on ${transport.displayName}.`
     }
 
+    if (character?.reserved) {
+      unit.reserved = true
+      return `Place in reserve along with ${character.displayName}.`
+    }
+
+    if (transport?.reserved) {
+      unit.reserved = true
+      return `Place in reserve along with ${character.displayName}.`
+    }
+
+    unit.reserved = false
     if (transport) {
       return `Unit is embarked in ${transport.displayName}.`
     }
 
-    if (retinue?.reserved || transport?.reserved) {
-      unit.reserved = true
-      return `Place in reserve along with ${retinue.displayName}.`
-    }
-
-    if (retinue) {
-      return `Deploy as near as possible to ${retinue.displayName}, seeking an ideal location from which to charge, fire, use pyschic powers or be in cover, as appropriate to the character.`
+    if (character) {
+      return `Deploy within 3" of ${character.displayName}, seeking an ideal location from which to charge, fire, or be in cover, as appropriate to the unit.`
     }
 
     if (unit.deepstriker) {
@@ -108,11 +106,10 @@ const generateAction = (unit, game) => {
       }
     } else if (rollD6() >= 5) {
       unit.reserved = true
-      return 'Place unit in strategic reserve.'
+      return 'Place unit in strategic reserves.'
     }
 
-    unit.reserved = false
-    return `Set up ${rollD6() + rollD6()}" ${rollDirection()} from spawn point ${Math.ceil(Math.random() * game.spawnPoints.length)}.`
+    return `Set up ${rollD6() + rollD6()}" ${rollDirection()} from spawn point ${Math.ceil(Math.random() * 4)}.`
   }
 
   if (phase === 'Move') {
@@ -123,9 +120,9 @@ const generateAction = (unit, game) => {
         return 'The unit remains in reserve with its transport.'
       }
 
-      if (retinue && !retinue.embarked) {
+      if (character && !character.embarked) {
         unit.embarked = false
-        return `The character disembarks as close as possible to ${retinue.displayName}, seeking an ideal location from which to charge, fire, use pyschic powers or be in cover, as appropriate to the character.`
+        return `The retinue disembarks within 3" of ${character.displayName}, seeking an ideal location from which to charge, fire, use pyschic powers or be in cover, as appropriate to the unit.`
       }
 
       if (behavior === 'Erratic') {
@@ -148,18 +145,18 @@ const generateAction = (unit, game) => {
       }
     }
 
-    if (retinue && retinue.reserved) {
-      return `The character remains in reserve alongside ${retinue.displayName}.`
+    if (character && character.reserved) {
+      return `The retinue remains in reserve alongside ${character.displayName}.`
     }
 
-    if (retinue) {
-      return `The character moves as close as possible to ${retinue.displayName}, seeking an ideal location from which to charge, fire, use pyschic powers or be in cover, as appropriate to the character.`
+    if (character) {
+      return `The retinue moves as close as possible to ${character.displayName}, seeking an ideal location from which to charge, fire, use pyschic powers or be in cover, as appropriate to the unit.`
     }
 
     if (unit.reserved) {
-      if (retinue && !retinue.reserved) {
+      if (character && !character.reserved) {
         unit.reserved = false
-        return `Character deploys alongside ${retinue.displayName}, seeking an ideal location from which to charge, fire, use pyschic powers or be in cover, as appropriate to the character..`
+        return `The retinue deploys alongside ${character.displayName}, seeking an ideal location from which to charge, fire, use pyschic powers or be in cover, as appropriate to the unit.`
       }
 
       if (rollD6() >= 5) {
@@ -268,8 +265,8 @@ const generateAction = (unit, game) => {
   }
 
   if (phase === 'Charge') {
-    if (retinue) {
-      return `The character attempts to charge all targets ${retinue.displayName} is engaged with. Otherwise, it does not charge.`
+    if (character) {
+      return `The retinue attempts to charge all targets ${character.displayName} is engaged with. Otherwise, it does not charge.`
     }
 
     if (behavior === 'Erratic') {
@@ -297,16 +294,8 @@ const generateAction = (unit, game) => {
   }
 }
 
-const spawnPoint = () => `${roll2D6()}" ${rollDirection()} of an objective`
-
 export default function defaultBehaviors(state = defaultState, action) {
   switch (action.type) {
-    case 'ADD_SPAWN_POINT':
-      return set('spawnPoints', concat(spawnPoint(), state.spawnPoints), state)
-
-    case 'REMOVE_SPAWN_POINT':
-      return set('spawnPoints', drop(1, state.spawnPoints), state)
-
     case 'PLAYER_POWER':
       return set('playerPower', action.playerPower, state)
 
@@ -316,15 +305,18 @@ export default function defaultBehaviors(state = defaultState, action) {
     case 'CRUSADE_POINTS':
       return set('crusadePoints', action.crusadePoints, state)
 
+    case 'COMMAND_POINTS':
+      return set('commandPoints', action.commandPoints, state)
+
     case 'GENERATE_ARMY': {
       const units = rollList(action.state)
       return {
         ...state,
         phase: 'Deploy',
-        spawnPoints: [spawnPoint(), spawnPoint(), spawnPoint(), spawnPoint()],
         enemyStrategem: '',
+        commandPoints: state.crusadePoints,
         units,
-        actionOrder: actionOrder('Deploy', units),
+        actionOrder: actionOrder(units),
       }
     }
 
@@ -342,18 +334,19 @@ export default function defaultBehaviors(state = defaultState, action) {
           reserved: action.unit?.reserved || false
         })),
         u && set(`units.${u}.retinueOf`, c),
+        s => set('actionOrder', actionOrder(s.units), s),
       ].filter(Boolean))(state)
     }
 
     case 'SET_TRANSPORT': {
       const t = action.transport.displayName
-      const u = action.unit.displayName
+      const u = action.unit?.displayName || ''
 
       return flow([
         action.transport.transporting && update(`units.${action.transport.transporting}`, assign({transport: '', embarked: false})),
         set(`units.${t}.transporting`, u),
-        set(`units.${u}.transport`, t),
-        set(`units.${u}.embarked`, true),
+        u && set(`units.${u}.transport`, t),
+        u && set(`units.${u}.embarked`, true),
       ].filter(Boolean))(state)
     }
 
@@ -365,7 +358,7 @@ export default function defaultBehaviors(state = defaultState, action) {
         ...state,
         phase: action.phase,
         units: mapValues(set('action', ''), state.units),
-        actionOrder: actionOrder(action.phase, state.units),
+        actionOrder: actionOrder(state.units),
       }
 
     case 'UNIT_ACT': {
@@ -394,6 +387,14 @@ export default function defaultBehaviors(state = defaultState, action) {
     }
 
     case 'SET_DEAD': {
+      if (action.dead && state.commandPoints >= action.unit.power) {
+        let newState = update(`units.${action.unit.displayName}`, assign({action: 'Return the unit to Reserves rather than destroying it. It still counts as having been destroyed for all other rules purposes.', reserved: true}), state)
+
+        newState.commandPoints -= action.unit.power
+
+        return newState
+      }
+
       let newState = update(`units.${action.unit.displayName}`, assign({action: '', dead: action.dead}), state)
 
       let transporting = state.units[action.unit.transporting]

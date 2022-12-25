@@ -50,24 +50,6 @@ export const ActiveUnitTable = () => {
   </table>)
 }
 
-export const SpawnPoints = () => {
-  const { spawnPoints } = useGame()
-  const dispatch = useDispatch()
-
-  return (<table className="spawn-points" role="grid">
-    <thead><tr>
-      <th colSpan="2">
-        <span data-tooltip="Place at least 4 spawn points">Spawn Points</span>
-        <button className="small outline" onClick={() => dispatch({type: 'ADD_SPAWN_POINT'})}>+</button>
-        {spawnPoints.length > 4 ? <button className="small outline" onClick={() => dispatch({type: 'REMOVE_SPAWN_POINT'})}>-</button> : ''}
-      </th>
-    </tr></thead>
-    <tbody>
-      {spawnPoints.map((sp, i) => <tr key={i}><td></td><td>{sp}</td></tr>)}
-    </tbody>
-  </table>)
-}
-
 const EnemyArmy = () => {
   const dispatch = useDispatch()
   const state = useSelector(state => state)
