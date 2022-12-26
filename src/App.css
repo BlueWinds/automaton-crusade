@@ -83,11 +83,11 @@ td, th {
   text-decoration: line-through;
 }
 
-.unit-list [data-retinue-of=true] td:first-child, .unit-list [data-transport=true] td:first-child {
+.unit-list [data-retinue-of=true] td:first-child, .unit-list [data-transporting=true] td:first-child {
   padding-left: 2em;
 }
 
-.unit-list [data-retinue-of=true] .unit-status, .unit-list [data-transport=true] .unit-status {
+.unit-list [data-retinue-of=true] .unit-status, .unit-list [data-transporting=true] .unit-status {
 }
 
 .button-group ul {

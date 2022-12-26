@@ -42,20 +42,11 @@ const sortFn = (u1, u2) => {
   if (!u1.reserved && u2.reserved) { return -1 }
   if (u1.reserved && !u2.reserved) { return 1 }
 
-  if (u1.transporting === u2.displayName) { return -1 }
-  if (u2.transporting === u1.displayName) { return 1 }
-
-  if (u1.transport && !u2.transport) { return -1 }
-  if (!u1.transport && u2.transport) { return 1 }
-
-  if (u1.retinueOf && !u2.retinueOf && u1.retinueOf !== u2.displayName) { return -1 }
-  if (!u1.retinueOf && u2.retinueOf && u2.retinueOf !== u1.displayName) { return 1 }
+  if (u1.keywords.Transport && !u2.keywords.Transport) { return -1 }
+  if (!u1.keywords.Transport && u2.keywords.Transport) { return 1 }
 
   if (u1.keywords.Character && !u2.keywords.Character) { return -1 }
   if (!u1.keywords.Character && u2.keywords.Character) { return 1 }
-
-  if (u1.keywords.Transport && !u2.keywords.Transport) { return -1 }
-  if (!u1.keywords.Transport && u2.keywords.Transport) { return 1 }
 
   return behaviors.indexOf(u1.behavior) - behaviors.indexOf(u2.behavior)
 }
@@ -65,11 +56,12 @@ const actionOrder = (units) => Object.keys(units).sort((name1, name2) => {
 })
 
 const generateAction = (unit, game) => {
-  let transport = game.units[unit.transport]
-  if (transport?.dead || !unit.embarked) { transport = undefined }
-
   let character = game.units[unit.retinueOf]
   if (character?.dead) { character = undefined }
+
+  let transport = game.units[unit.transport] || game.units[character?.transport]
+  if (transport?.dead || (!unit.embarked && !character?.embarked)) { transport = undefined }
+
 
   const phase = game.phase
   const [behavior] = getCurrentBehavior(unit, game.units)
@@ -320,21 +312,14 @@ export default function defaultBehaviors(state = defaultState, action) {
       }
     }
 
-
     case 'SET_RETINUE': {
       const c = action.character.displayName
       const u = action.unit?.displayName || ''
 
       return flow([
         action.character.retinue && set(`units.${action.character.retinue}.retinueOf`, ''),
-        update(`units.${c}`, assign({
-          retinue: u,
-          transport: action.unit?.transport || '',
-          embarked: action.unit?.embarked || false,
-          reserved: action.unit?.reserved || false
-        })),
+        set(`units.${c}.retinue`, u),
         u && set(`units.${u}.retinueOf`, c),
-        s => set('actionOrder', actionOrder(s.units), s),
       ].filter(Boolean))(state)
     }
 
@@ -364,7 +349,25 @@ export default function defaultBehaviors(state = defaultState, action) {
     case 'UNIT_ACT': {
       const a = generateAction(action.unit, state)
       if (!a) { throw new Error() }
-      return set(`units.${action.unit.displayName}.action`, a, state)
+      let newState = set(`units.${action.unit.displayName}.action`, a, state)
+
+      const reserved = newState.units[action.unit.displayName].reserved
+      const retinue = newState.units[action.unit.retinue]
+      if (retinue) {
+        retinue.reserved = reserved
+      }
+
+      const transporting = newState.units[action.unit.transporting]
+      if (transporting) {
+        transporting.reserved = reserved
+
+        const transportingRetinue = newState.units[transporting.retinue]
+        if (transportingRetinue) {
+          transportingRetinue.reserved = reserved
+        }
+      }
+
+      return newState
     }
 
     case 'SET_EMBARKED':

@@ -37,7 +37,7 @@ export const ActiveUnitTable = () => {
       </tr>
     </thead>
     <tbody>
-      {actionOrder.map((name, i) => (<ActiveUnit key={i} unit={units[name]} />))}
+      {actionOrder.filter(name => !units[name].retinueOf && !units[name].transporting).map((name, i) => (<ActiveUnit key={i} unit={units[name]} />))}
     </tbody>
     <tfoot>
       <tr>

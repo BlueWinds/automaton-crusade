@@ -12,25 +12,35 @@ const ActiveUnit = ({ unit }) => {
 
   const [behavior, why] = getCurrentBehavior(unit, units)
 
-  return (<tr data-dead={unit.dead} data-retinue-of={!!unit.retinueOf} data-transport={!!unit.transport}>
-    <td><Unit unit={unit} /></td>
-    <td><ActionButton unit={unit} /> {behavior !== unit.behavior ? <span>{behavior}<br /><strike data-tooltip={why}>{unit.behavior}</strike></span> : unit.behavior}</td>
-    <td>{unit.dead ? '' : <UnitAction unit={unit} />}</td>
-    <td className="unit-status">
-      <label>
-        <span data-tooltip="Mark the unit as dead">Dead</span>
-        <input className="dead" type="checkbox" checked={unit.dead} onChange={e => dispatch({type: 'SET_DEAD', unit, dead: e.target.checked})} />
-      </label>
-      <label>
-        <span data-tooltip="Mark the unit as in reserves; It may deploy in future movement phases">Rsrvd</span>
-        <input className="reserved" type="checkbox" checked={unit.reserved} onChange={e => dispatch({type: 'SET_RESERVED', unit, reserved: e.target.checked})} />
-      </label>
-      {unit.transport  && <label>
-        <span data-tooltip="Mark the unit as embarked in its transport">Embarked</span>
-        <input className="embarked" type="checkbox" checked={unit.embarked} onChange={e => dispatch({type: 'SET_EMBARKED', unit, embarked: e.target.checked})} />
-      </label>}
-    </td>
-  </tr>)
+  const character = units[unit.retinueOf]
+
+  return (<>
+    <tr data-dead={unit.dead} data-retinue-of={!!unit.retinueOf} data-transporting={!!unit.transporting}>
+      <td><Unit unit={unit} /></td>
+      <td><ActionButton unit={unit} /> {behavior !== unit.behavior ? <span>{behavior}<br /><strike data-tooltip={why}>{unit.behavior}</strike></span> : unit.behavior}</td>
+      <td>{unit.dead ? '' : <UnitAction unit={unit} />}</td>
+      <td className="unit-status">
+        <label>
+          <span data-tooltip="Mark the unit as dead">Dead</span>
+          <input className="dead" type="checkbox" checked={unit.dead} onChange={e => dispatch({type: 'SET_DEAD', unit, dead: e.target.checked})} />
+        </label>
+        <label>
+          <span data-tooltip="Mark the unit as in reserves; It may deploy in future movement phases">Rsrvd</span>
+          <input className="reserved" type="checkbox" checked={unit.reserved} onChange={e => dispatch({type: 'SET_RESERVED', unit, reserved: e.target.checked})} />
+        </label>
+        {unit.transport && <label>
+          <span data-tooltip="Mark the unit as embarked in its transport">Embarked</span>
+          <input className="embarked" type="checkbox" checked={unit.embarked} onChange={e => dispatch({type: 'SET_EMBARKED', unit, embarked: e.target.checked})} />
+        </label>}
+        {character?.transport && <label>
+          <span data-tooltip="Retinues disembark with their character">Embarked</span>
+          <input className="embarked" type="checkbox" checked={character.embarked} disabled />
+        </label>}
+      </td>
+    </tr>
+    {unit.retinue && <ActiveUnit unit={units[unit.retinue]} />}
+    {unit.transport && <ActiveUnit unit={units[unit.transport]} />}
+  </>)
 }
 
 const characterCantActYet = (unit, units, phase) => {
@@ -49,6 +59,8 @@ const cantActBecauseReserved = (unit, phase, units) => {
 const ActionButton = ({ unit }) => {
   const dispatch = useDispatch()
 
+  if (unit.dead) { return null }
+
   return <button className="outline small roll-action" onClick={() => dispatch({type: 'UNIT_ACT', unit})}>{unit.action ? '⟳' : '+'}</button>
 }
 
@@ -65,14 +77,14 @@ const UnitAction = ({ unit }) => {
       <span>Retinue</span>
       <select value={unit.retinue} onChange={e => dispatch({type: 'SET_RETINUE', character: unit, unit: units[e.target.value]})}>
         <option value=''></option>
-        {Object.values(units).filter(u => !u.keywords['Character']).map(u => <option key={u.displayName} value={u.displayName} disabled={u.retinueOf && u.retinueOf !== unit.displayName}>{u.displayName}</option>)}
+        {Object.values(units).filter(u => !u.keywords['Character']).map(u => <option key={u.displayName} value={u.displayName} disabled={(u.retinueOf && u.retinueOf !== unit.displayName) || u.transport}>{u.displayName}</option>)}
       </select>
     </label>}
     {phase === 'Deploy' && unit.keywords['Transport'] && <label className="transport">
       <span>Transporting</span>
       <select value={unit.transporting} onChange={e => dispatch({type: 'SET_TRANSPORT', transport: unit, unit: units[e.target.value]})}>
         <option value=''></option>
-        {Object.values(units).filter(u => !u.keywords['Transport']).map(u => <option key={u.displayName} value={u.displayName} disabled={u.transport && u.transport !== unit.displayName}>{u.displayName}</option>)}
+        {Object.values(units).filter(u => !u.keywords['Transport']).map(u => <option key={u.displayName} value={u.displayName} disabled={(u.transport && u.transport !== unit.displayName) || u.retinueOf}>{u.displayName}</option>)}
       </select>
     </label>}
     {cantActBecauseReserved(unit, phase, units) || characterCantActYet(unit, units, phase) || ''}
