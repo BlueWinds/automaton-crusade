@@ -15,14 +15,12 @@ The enemy deploys, and later acts, in a fixed order based on their behavior. Det
 
 Enemy units can spawn outside their deployment zone, but not within the players' deployment zone, and not within 9" of player units. Nudge units away from the rolled location until you find the nearest legal place to deploy them, preferring to remain / move into cover if unsure which direction. If a unit spawns partially in cover, move them such that the majority of that unit is in the same piece of cover.
 
-#### Transports
-
-For each transport, choose a unit that can embark on it. The unit will start the game embarked, and may dismount on future turns. If the unit is a retinue, the character will attempt to join it in the transport, and disembark at the same as their unit.
-
 #### Retinues
-
-Enemy characters always deploy and act first.
 
 When a character deploys, choose an appropriate retinue if one exists - Hive Tyrant with Hive Guard, or a squishy psycher with a unit of infantry that can provide them Look Out Sir protection, for example.
 
 A retinue will deploy near its character, including in reserves or in the same transport, and will attempt to stick with the character throughout the battle.
+
+#### Transports
+
+For each transport, choose a unit that can embark on it. The unit will start the game embarked, and may dismount on future turns. If the unit is a character, that character's retinue will attempt to join it in the transport, and disembark at the same as their character.

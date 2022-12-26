@@ -42,11 +42,11 @@ const sortFn = (u1, u2) => {
   if (!u1.reserved && u2.reserved) { return -1 }
   if (u1.reserved && !u2.reserved) { return 1 }
 
-  if (u1.keywords.Transport && !u2.keywords.Transport) { return -1 }
-  if (!u1.keywords.Transport && u2.keywords.Transport) { return 1 }
-
   if (u1.keywords.Character && !u2.keywords.Character) { return -1 }
   if (!u1.keywords.Character && u2.keywords.Character) { return 1 }
+
+  if (u1.keywords.Transport && !u2.keywords.Transport) { return -1 }
+  if (!u1.keywords.Transport && u2.keywords.Transport) { return 1 }
 
   return behaviors.indexOf(u1.behavior) - behaviors.indexOf(u2.behavior)
 }
