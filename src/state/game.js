@@ -244,7 +244,7 @@ const generateAction = (unit, game) => {
     }
 
     if (behavior === 'Tactical') {
-      return 'If doing so would not interrupt a mission action, then for each weapon this unit fires it at the player unit whose toughness most closely matches the strength of the weapon. To break ties, it fires at the unit with the highest power level.'
+      return 'If doing so would not interrupt a mission action, then for each weapon this unit fires it at the player unit whose toughness most closely matches the strength of the weapon. To break ties, it fires at the unit with the highest power level / point cost.'
     }
 
     if (behavior === 'Berserk') {
@@ -252,7 +252,7 @@ const generateAction = (unit, game) => {
     }
 
     if (behavior === 'Skittish') {
-      return 'This unit fires at the player unit whose toughness most closely matches the strength of the weapon. To break ties, it fires at the unit with the highest power level.'
+      return 'This unit fires at the player unit whose toughness most closely matches the strength of the weapon. To break ties, it fires at the unit with the highest power level / point cost.'
     }
   }
 
@@ -288,6 +288,13 @@ const generateAction = (unit, game) => {
 
 export default function defaultBehaviors(state = defaultState, action) {
   switch (action.type) {
+    case 'SET_MODE':
+      if (action.mode === 'power') {
+        return set('playerPower', state.playerPower / 20, state)
+      } else if (action.mode === 'points') {
+        return set('playerPower', state.playerPower * 20, state)
+      }
+      throw new Error('unrecognized mode')
     case 'PLAYER_POWER':
       return set('playerPower', action.playerPower, state)
 

@@ -44,10 +44,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-header {
-  text-align: center;
-}
-
 td, th {
   padding: 0.5rem 0.25rem;
 }
@@ -169,14 +165,13 @@ button.small, nav button {
   vertical-align: initial;
 }
 
-header {
-  position: relative;
+header label {
+  width: 8em;
 }
 
-header button {
-  position: absolute;
-  top: calc(50% - 1em);
-  right: 1em;
+header li {
+  padding: 0;
+  padding-bottom: 0;
 }
 
 article {

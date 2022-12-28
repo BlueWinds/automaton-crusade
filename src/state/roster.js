@@ -8,6 +8,10 @@ const powerLevel = (unit) => Array.from(unit.querySelectorAll('[name=" PL"]'))
   .map(u => parseInt(u.getAttribute('value'), 10))
   .reduce((sum, c) => sum + c, 0)
 
+const pointsCost = (unit) => Array.from(unit.querySelectorAll('[name="pts"]'))
+  .map(u => parseInt(u.getAttribute('value'), 10))
+  .reduce((sum, c) => sum + c, 0)
+
 const displayName = (unit) => {
   let str = unit.getAttribute('name')
 
@@ -39,6 +43,7 @@ const parseArmyList = (armyList) => {
       name: unit.getAttribute('name'),
       displayName: name,
       power: powerLevel(unit),
+      points: pointsCost(unit),
       keywords: {},
       abilities: {},
       psychicPowers: {},

@@ -5,6 +5,7 @@ import roster, { rosterXML } from './roster'
 import game from './game'
 import help from './help'
 import modal from './modal'
+import mode from './mode'
 
 const combined = combineReducers({
   defaultBehaviors,
@@ -13,6 +14,7 @@ const combined = combineReducers({
   game,
   help,
   modal,
+  mode,
 });
 
 export default function rootReducer(state = {}, action) {

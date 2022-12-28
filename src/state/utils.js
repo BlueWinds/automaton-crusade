@@ -4,8 +4,10 @@ import fromPairs from 'lodash/fp/fromPairs'
 export const useRoster = () => useSelector(state => state.roster)
 export const useDefaultBehaviors = () => useSelector(state => state.defaultBehaviors)
 export const useGame = () => useSelector(state => state.game)
+export const useMode = () => useSelector(state => state.mode)
 
 export const sumPower = (units) => Object.values(units).reduce((sum, u) => sum + u.power, 0)
+export const sumPoints = (units) => Object.values(units).reduce((sum, u) => sum + u.points, 0)
 
 export const rollD3 = () => Math.ceil(Math.random() * 3)
 export const rollD6 = () => Math.ceil(Math.random() * 6)
