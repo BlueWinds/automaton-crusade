@@ -205,7 +205,7 @@ const generateAction = (unit, game) => {
         case 5:
           return `The unit makes a Normal Move as far as possible to the ${rollDirection()}.`
         default:
-          return `The unit makes a Advances as far as possible to the ${rollDirection()}.`
+          return `The unit Advances as far as possible to the ${rollDirection()}.`
       }
     }
 
