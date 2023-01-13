@@ -41,14 +41,16 @@ export const rollList = ({ roster, defaultBehaviors, game }) => {
   const discards = []
   const targetPowerLevel = game.playerPower * (1 + game.enemyBonus / 100)
 
-  while (sumPower(newList) > targetPowerLevel) {
+  const sum = game.mode === 'power' ? sumPower : sumPoints
+
+  while (sum(newList) > targetPowerLevel) {
     let i = Math.floor(Math.random() * newList.length)
     discards.push(newList.splice(i, 1)[0])
   }
 
-  discards.sort((u1, u2) => u2.power - u1.power)
+  discards.sort((u1, u2) => u2[game.mode] - u1[game.mode])
   for (let i = 0; i < discards.length; i++) {
-    if (sumPower(newList) + discards[i].power <= targetPowerLevel) {
+    if (sum(newList) + discards[i][game.mode] <= targetPowerLevel) {
       newList.push(discards[i])
     }
   }
